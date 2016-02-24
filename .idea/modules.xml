@@ -3,9 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SolverExample.iml" filepath="$PROJECT_DIR$/SolverExample.iml" />
-      <module fileurl="file://$PROJECT_DIR$/choco3-choco-3.3.0/choco-solver/src/main/main.iml" filepath="$PROJECT_DIR$/choco3-choco-3.3.0/choco-solver/src/main/main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/choco-graph-master/src/main/main1.iml" filepath="$PROJECT_DIR$/choco-graph-master/src/main/main1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/choco-graph-master/src/test/test.iml" filepath="$PROJECT_DIR$/choco-graph-master/src/test/test.iml" />
     </modules>
   </component>
 </project>

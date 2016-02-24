@@ -11,6 +11,6 @@
     <orderEntry type="module" module-name="main" />
     <orderEntry type="module" module-name="test1" />
     <orderEntry type="module" module-name="main2" />
-    <orderEntry type="library" name="choco-solver-3.3.0-with-dependencies" level="project" />
+    <orderEntry type="library" name="choco-graph-3.3.0" level="project" />
   </component>
 </module>

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="choco-graph-3.3.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/choco-3.3.0/choco-graph-3.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/choco-3.3.0/choco-solver-3.3.0-with-dependencies.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
