@@ -1,7 +1,10 @@
+package org.chocosolver.solver.sbcstrs;
+
 import org.chocosolver.solver.constraints.Propagator;
 import org.chocosolver.solver.constraints.PropagatorPriority;
 import org.chocosolver.solver.exception.ContradictionException;
 import org.chocosolver.solver.variables.IDirectedGraphVar;
+import org.chocosolver.solver.variables.IUndirectedGraphVar;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
 import org.chocosolver.util.ESat;
@@ -11,12 +14,12 @@ import org.chocosolver.util.tools.ArrayUtils;
 /**
  * @author Моклев Вячеслав
  */
-public class PropAdjacencyMatrix extends Propagator<Variable> {
-    IDirectedGraphVar graph;
+public class PropAdjacencyUndirectedMatrix extends Propagator<Variable> {
+    IUndirectedGraphVar graph;
     int n;
     IntVar[] t;
 
-    public PropAdjacencyMatrix(IDirectedGraphVar graphVar, IntVar[] t) {
+    public PropAdjacencyUndirectedMatrix(IUndirectedGraphVar graphVar, IntVar[] t) {
         super(ArrayUtils.append(t, new Variable[]{graphVar}), PropagatorPriority.LINEAR, false);
         graph = graphVar;
         n = graphVar.getNbMaxNodes();
@@ -26,7 +29,7 @@ public class PropAdjacencyMatrix extends Propagator<Variable> {
     @Override
     public void propagate(int evtmask) throws ContradictionException {
         for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
+            for (int j = i + 1; j < n; j++) {
                 if (t[i + j * n].isInstantiatedTo(1)) {
                     graph.enforceArc(i, j, aCause);
                 }
@@ -40,17 +43,17 @@ public class PropAdjacencyMatrix extends Propagator<Variable> {
     @Override
     public ESat isEntailed() {
         for (int i = 0; i < n; i++) {
-            ISet children = graph.getMandSuccOf(i);
+            ISet children = graph.getMandNeighOf(i);
             for (int j = 0; j < n; j++) {
-                if (t[i + j * n].isInstantiatedTo(0) && children.contain(j)) {
+                if ((t[i + j * n].isInstantiatedTo(0) || t[j + i * n].isInstantiatedTo(0)) && children.contain(j)) {
                     return ESat.FALSE;
                 }
             }
         }
         for (int i = 0; i < n; i++) {
-            ISet children = graph.getPotSuccOf(i);
+            ISet children = graph.getPotNeighOf(i);
             for (int j = 0; j < n; j++) {
-                if (t[i + j * n].isInstantiatedTo(1) && !children.contain(j)) {
+                if ((t[i + j * n].isInstantiatedTo(1) || t[j + i * n].isInstantiatedTo(1)) && !children.contain(j)) {
                     return ESat.FALSE;
                 }
             }

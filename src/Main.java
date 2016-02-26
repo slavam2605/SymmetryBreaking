@@ -78,7 +78,7 @@ public class Main extends AbstractProblem {
         // ---------------- constraints ------------------
 
         // t[i, j] <-> G
-        //solver.post(new Constraint("EDGE_BOUND", new PropAdjacencyMatrix(graph, t)));
+        //solver.post(new Constraint("EDGE_BOUND", new org.chocosolver.solver.sbcstrs.PropAdjacencyMatrix(graph, t)));
 
         // TODO remove
 //        solver.post(ICF.arithm(y[0], "=", VF.fixed(1, solver)));

@@ -3,10 +3,12 @@ import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.cstrs.GCF;
 import org.chocosolver.solver.sbcstrs.SBCF;
-import org.chocosolver.solver.sbcstrs.SymmetryBreakingConstraintFactory;
+import org.chocosolver.solver.sbcstrs.test.util.PropGirth;
+import org.chocosolver.solver.sbcstrs.test.util.PropIncrementalGirth;
 import org.chocosolver.solver.search.GraphStrategyFactory;
 import org.chocosolver.solver.trace.Chatterbox;
 import org.chocosolver.solver.variables.*;
+import org.chocosolver.util.ESat;
 import org.chocosolver.util.objects.graphs.UndirectedGraph;
 import org.chocosolver.util.objects.setDataStructures.SetType;
 import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
@@ -30,12 +32,12 @@ public class MainUndir extends AbstractProblem {
 
     @Override
     public void createSolver() {
-        solver = new Solver("prost");
+        solver = new Solver();
     }
 
-    private static final int n = 8;//31;
+    private static final int n = 10;//31;
     private static final int m = 10;//81;
-    private static final int l = 7;//4;
+    private static final int l = 9;//4;
 
     @Override
     public void buildModel() {
@@ -48,7 +50,8 @@ public class MainUndir extends AbstractProblem {
         }
         graph = GraphVarFactory.undirected_graph_var("G", GLB, GUB, solver);
         solver.post(GCF.nb_edges(graph, VF.fixed(m, solver)));
-        solver.post(new Constraint("GirthConstraint", new PropIncrementalGirth(graph, VF.fixed(l, solver))));
+        solver.post(GCF.connected(graph));
+        solver.post(new Constraint("GirthConstraint", new PropGirth(graph, VF.fixed(l, solver))));
         SBCF.postSymmetryBreaking(graph, solver);
     }
 
@@ -110,7 +113,7 @@ public class MainUndir extends AbstractProblem {
         long time = System.nanoTime();
         MainUndir main = new MainUndir();
         main.level = Level.QUIET;
-        main.execute(args);
+        main.execute();
         pw.println("Solutions: " + main.count);
         pw.close();
         System.setOut(oldOut);

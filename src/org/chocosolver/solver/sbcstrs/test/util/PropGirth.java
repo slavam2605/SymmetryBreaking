@@ -1,6 +1,9 @@
+package org.chocosolver.solver.sbcstrs.test.util;
+
 import org.chocosolver.solver.constraints.Propagator;
 import org.chocosolver.solver.constraints.PropagatorPriority;
 import org.chocosolver.solver.exception.ContradictionException;
+import org.chocosolver.solver.sbcstrs.test.util.Pair;
 import org.chocosolver.solver.variables.IUndirectedGraphVar;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
@@ -28,7 +31,7 @@ public class PropGirth extends Propagator<Variable> {
     public void propagate(int evtmask) throws ContradictionException {
         int upperGraphGirth = getUpperGraphGirth();
         int lowerGraphGirth = getLowerGraphGirth();
-        System.out.println("$PropGirth::propagate$> " + lowerGraphGirth + ", " + upperGraphGirth);
+        System.out.println("$org.chocosolver.solver.sbcstrs.test.util.PropGirth::propagate$> " + lowerGraphGirth + ", " + upperGraphGirth);
         if (upperGraphGirth < girth.getUB()) {
             girth.updateUpperBound(upperGraphGirth, aCause);
         }

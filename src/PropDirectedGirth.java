@@ -62,7 +62,7 @@ public class PropDirectedGirth extends Propagator<Variable> {
         updateFloyd();
         int upperGraphGirth = getUpperGraphGirth();
         int lowerGraphGirth = getLowerGraphGirth();
-        System.out.println("$PropGirth::propagate$> " + lowerGraphGirth + ", " + upperGraphGirth);
+        System.out.println("$org.chocosolver.solver.sbcstrs.test.util.PropGirth::propagate$> " + lowerGraphGirth + ", " + upperGraphGirth);
         if (upperGraphGirth < girth.getUB()) {
             girth.updateUpperBound(upperGraphGirth, aCause);
         }

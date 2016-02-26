@@ -1,3 +1,5 @@
+package org.chocosolver.solver.sbcstrs.test.util;
+
 /**
  * @author Моклев Вячеслав
  */
