@@ -1,3 +1,4 @@
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.chocosolver.samples.AbstractProblem;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;

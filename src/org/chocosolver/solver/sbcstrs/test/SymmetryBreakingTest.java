@@ -4,6 +4,7 @@ import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.cstrs.GCF;
 import org.chocosolver.solver.sbcstrs.SBCF;
+import org.chocosolver.solver.sbcstrs.test.util.Pair;
 import org.chocosolver.solver.sbcstrs.test.util.PropGirth;
 import org.chocosolver.solver.sbcstrs.test.util.PropIncrementalGirth;
 import org.chocosolver.solver.search.GraphStrategyFactory;
@@ -13,6 +14,7 @@ import org.chocosolver.solver.variables.IUndirectedGraphVar;
 import org.chocosolver.solver.variables.VF;
 import org.chocosolver.util.objects.graphs.UndirectedGraph;
 import org.chocosolver.util.objects.setDataStructures.SetType;
+import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -22,16 +24,75 @@ import org.testng.log4testng.Logger;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.HashSet;
 
 import static org.testng.Assert.*;
 
 /**
+ * Tests for {@code org.chocosolver.solver.sbcstrs.SymmetryBreakingConstraintFactory#postSymmetryBreaking(IUndirectedGraphVar, Solver) postSymmetryBreaking}.
+ * Symmetry breaking is using in next problem: given n, m and l – integers.
+ * <br/>
+ * Find whether exists undirected connected graph with n nodes, m edges
+ * and with girth equals to l.
+ * <br/>
+ * Tests contain checking correctness of answers found and equivalence of existance of solution
+ * with symmetry breaking predicates and without them.
+ *
  * @author Моклев Вячеслав
  */
 public class SymmetryBreakingTest {
     private static PrintStream oldOut;
 
-    public static boolean solutionExists(int n, int m, int l, boolean addSymmetryBreaking) {
+    /**
+     * Calculates a girth of a given graph.
+     *
+     * @param graph given graph
+     * @return girth of {@code graph}
+     */
+    private static int getGraphGirth(IUndirectedGraphVar graph) {
+        int n = graph.getNbMaxNodes();
+        int g = n + 1;
+        for (int i = 0; i < n; i++) {
+            int pg = getGraphVertexGirth(graph, i);
+            if (pg < g) {
+                g = pg;
+            }
+        }
+        return g;
+    }
+
+    private static int getGraphVertexGirth(IUndirectedGraphVar graph, int vertex) {
+        int n = graph.getNbMaxNodes();
+        HashSet<Pair<Integer, Integer>> reachable = new HashSet<>();
+        reachable.add(new Pair<>(vertex, -1));
+        for (int i = 1; i <= n; i++) {
+            HashSet<Pair<Integer, Integer>> set = new HashSet<>();
+            for (Pair<Integer, Integer> u: reachable) {
+                for (int v: new ItSet(graph.getMandNeighOf(u.getA()))) {
+                    if (v != u.getB()) {
+                        if (v == vertex) {
+                            return i;
+                        }
+                        set.add(new Pair<>(v, u.getA()));
+                    }
+                }
+            }
+            reachable = set;
+        }
+        return n + 1;
+    }
+
+    /**
+     * Tries to find a solution of the given problem and check it for correctness.
+     *
+     * @param n count of nodes
+     * @param m count of edges
+     * @param l required girth
+     * @param addSymmetryBreaking enable symmetry breaking predicates or not
+     * @throws AssertionError if solution found is not correct
+     * @return true, if solution exists and false otherwise
+     */
+    private static boolean solutionExists(int n, int m, int l, boolean addSymmetryBreaking) {
         Solver solver = new Solver();
         UndirectedGraph GLB = new UndirectedGraph(solver, n, SetType.BITSET, true);
         UndirectedGraph GUB = new UndirectedGraph(solver, n, SetType.BITSET, true);
@@ -50,7 +111,18 @@ public class SymmetryBreakingTest {
         if (addSymmetryBreaking) {
             SBCF.postSymmetryBreaking(graph, solver);
         }
-        return solver.findSolution();
+        boolean result = solver.findSolution();
+        if (result) { // check correctness of found answer
+            int count = 0;
+            for (int u = 0; u < n; u++) {
+                for (int v: new ItSet(graph.getMandNeighOf(u))) {
+                    count++;
+                }
+            }
+            Assert.assertEquals(count, 2 * m, "correct number of edges");
+            Assert.assertEquals(getGraphGirth(graph), l, "correct girth");
+        }
+        return result;
     }
 
     @BeforeMethod
@@ -66,6 +138,14 @@ public class SymmetryBreakingTest {
         System.setOut(oldOut);
     }
 
+    /**
+     * Checks equivalence of existance of solution
+     * with and without symmetry breaking.
+     *
+     * @param n count of nodes
+     * @param m count of edges
+     * @param l required girth
+     */
     public static void test(int n, int m, int l) {
         Assert.assertEquals(
                 solutionExists(n, m, l, true),
