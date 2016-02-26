@@ -5,6 +5,7 @@ import org.chocosolver.solver.variables.IDirectedGraphVar;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
 import org.chocosolver.util.ESat;
+import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 
 import static java.lang.Math.*;
 
@@ -36,7 +37,7 @@ public class PropDirectedGirth extends Propagator<Variable> {
             w[i][i] = 0;
         }
         for (int u = 0; u < n; u++) {
-            for (int v: new MySet(graph.getMandSuccOf(u))) {
+            for (int v: new ItSet(graph.getMandSuccOf(u))) {
                 w[u][v] = 1;
             }
         }

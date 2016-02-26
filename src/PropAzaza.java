@@ -3,6 +3,7 @@ import org.chocosolver.solver.exception.ContradictionException;
 import org.chocosolver.solver.variables.GraphEventType;
 import org.chocosolver.solver.variables.IUndirectedGraphVar;
 import org.chocosolver.util.ESat;
+import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 
 /**
  * @author Моклев Вячеслав
@@ -20,10 +21,10 @@ public class PropAzaza extends Propagator<IUndirectedGraphVar> {
 
     @Override
     public void propagate(int evtmask) throws ContradictionException {
-        MySet nodes = new MySet(graph.getPotentialNodes());
-        MySet succ;
+        ItSet nodes = new ItSet(graph.getPotentialNodes());
+        ItSet succ;
         for (int i: nodes) {
-            succ = new MySet(graph.getPotNeighOf(i));
+            succ = new ItSet(graph.getPotNeighOf(i));
             for (int j: succ) {
                 if (i == 0 && j == 1) {
                     graph.removeArc(i, j, aCause);
@@ -35,10 +36,10 @@ public class PropAzaza extends Propagator<IUndirectedGraphVar> {
     @Override
     public ESat isEntailed() {
         System.out.println("WUUUUUUUUUUUUT");
-        MySet nodes = new MySet(graph.getMandatoryNodes());
-        MySet succ;
+        ItSet nodes = new ItSet(graph.getMandatoryNodes());
+        ItSet succ;
         for (int i: nodes) {
-            succ = new MySet(graph.getMandNeighOf(i));
+            succ = new ItSet(graph.getMandNeighOf(i));
             for (int j: succ) {
                 if (i == 0 && j == 1) {
                     return ESat.FALSE;

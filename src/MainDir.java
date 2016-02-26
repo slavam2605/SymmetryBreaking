@@ -11,6 +11,7 @@ import org.chocosolver.util.ESat;
 import org.chocosolver.util.objects.graphs.DirectedGraph;
 import org.chocosolver.util.objects.graphs.UndirectedGraph;
 import org.chocosolver.util.objects.setDataStructures.SetType;
+import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -99,7 +100,7 @@ public class MainDir extends AbstractProblem {
         out.println("$#$>");
         for (int i = 0; i < n; i++) {
             out.print(i + " -> {");
-            for (int v: new MySet(graph.getMandSuccOf(i))) {
+            for (int v: new ItSet(graph.getMandSuccOf(i))) {
                 out.print(v + ", ");
             }
             out.println("}");

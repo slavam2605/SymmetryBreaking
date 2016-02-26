@@ -1,15 +1,16 @@
 import org.chocosolver.samples.AbstractProblem;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.cstrs.GCF;
+import org.chocosolver.solver.sbcstrs.SymmetryBreakingConstraintFactory;
 import org.chocosolver.solver.variables.*;
 import org.chocosolver.util.objects.graphs.DirectedGraph;
 import org.chocosolver.util.objects.setDataStructures.SetType;
+import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +43,7 @@ public class MainKek extends AbstractProblem {
         graph = GraphVarFactory.directed_graph_var("G", GLB, GUB, solver);
         solver.post(GCF.directed_tree(graph, 0));
         solver.post(GCF.max_in_degrees(graph, 1));
-        SuperConstraintFactory.postSymmetryBreaking(graph, solver);
+        SymmetryBreakingConstraintFactory.postSymmetryBreaking(graph, solver);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class MainKek extends AbstractProblem {
         out.println("$#$>");
         for (int i = 0; i < n; i++) {
             out.print(i + " -> {");
-            for (int v: new MySet(graph.getMandSuccOf(i))) {
+            for (int v: new ItSet(graph.getMandSuccOf(i))) {
                 out.print(v + ", ");
             }
             out.println("}");

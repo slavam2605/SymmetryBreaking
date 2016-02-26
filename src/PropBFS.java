@@ -5,6 +5,7 @@ import org.chocosolver.solver.variables.GraphEventType;
 import org.chocosolver.solver.variables.IDirectedGraphVar;
 import org.chocosolver.util.ESat;
 import org.chocosolver.util.objects.setDataStructures.ISet;
+import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 
 import java.util.*;
 
@@ -24,9 +25,9 @@ public class PropBFS extends Propagator<IDirectedGraphVar> {
 
     @Override
     public void propagate(int evtmask) throws ContradictionException {
-        MySet nodes = new MySet(graph.getPotentialNodes());
+        ItSet nodes = new ItSet(graph.getPotentialNodes());
         for (int node: nodes) {
-            MySet succs = new MySet(graph.getPotSuccOf(node));
+            ItSet succs = new ItSet(graph.getPotSuccOf(node));
             for (int succ: succs) {
                 if (succ <= node) {
                     graph.removeArc(node, succ, aCause);
@@ -42,7 +43,7 @@ public class PropBFS extends Propagator<IDirectedGraphVar> {
     private boolean bfsEnumerated1() {
         for (int v = 0; v < n; v++) {
             System.out.print(">>> " + v + " -> ");
-            MySet arcs = new MySet(graph.getMandSuccOf(v));
+            ItSet arcs = new ItSet(graph.getMandSuccOf(v));
             SortedSet<Integer> sortedArcs = new TreeSet<>();
             for (int u: arcs) {
                 sortedArcs.add(u);
@@ -60,7 +61,7 @@ public class PropBFS extends Propagator<IDirectedGraphVar> {
         used[0] = true;
         while (!q.isEmpty()) {
             int v = q.poll();
-            MySet arcs = new MySet(graph.getMandSuccOf(v));
+            ItSet arcs = new ItSet(graph.getMandSuccOf(v));
             SortedSet<Integer> sortedArcs = new TreeSet<>();
             for (int u: arcs) {
                 sortedArcs.add(u);
@@ -91,9 +92,9 @@ public class PropBFS extends Propagator<IDirectedGraphVar> {
 
     @Override
     public ESat isEntailed() {
-        MySet nodes = new MySet(graph.getMandatoryNodes());
+        ItSet nodes = new ItSet(graph.getMandatoryNodes());
         for (int node: nodes) {
-            MySet succs = new MySet(graph.getMandSuccOf(node));
+            ItSet succs = new ItSet(graph.getMandSuccOf(node));
             for (int succ: succs) {
                 if (succ <= node) {
                     return ESat.FALSE;

@@ -1,22 +1,20 @@
 import org.chocosolver.samples.AbstractProblem;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;
-import org.chocosolver.solver.constraints.ICF;
-import org.chocosolver.solver.constraints.LCF;
 import org.chocosolver.solver.cstrs.GCF;
+import org.chocosolver.solver.sbcstrs.SBCF;
+import org.chocosolver.solver.sbcstrs.SymmetryBreakingConstraintFactory;
 import org.chocosolver.solver.search.GraphStrategyFactory;
 import org.chocosolver.solver.trace.Chatterbox;
 import org.chocosolver.solver.variables.*;
-import org.chocosolver.util.ESat;
-import org.chocosolver.util.objects.graphs.DirectedGraph;
 import org.chocosolver.util.objects.graphs.UndirectedGraph;
 import org.chocosolver.util.objects.setDataStructures.SetType;
+import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,8 +48,8 @@ public class MainUndir extends AbstractProblem {
         }
         graph = GraphVarFactory.undirected_graph_var("G", GLB, GUB, solver);
         solver.post(GCF.nb_edges(graph, VF.fixed(m, solver)));
-        solver.post(new Constraint("GirthConstraint", new PropGirth(graph, VF.fixed(l, solver))));
-        SuperConstraintFactory.postSymmetryBreaking(graph, solver);
+        solver.post(new Constraint("GirthConstraint", new PropIncrementalGirth(graph, VF.fixed(l, solver))));
+        SBCF.postSymmetryBreaking(graph, solver);
     }
 
     @Override
@@ -97,7 +95,7 @@ public class MainUndir extends AbstractProblem {
         out.println("$#$>");
         for (int i = 0; i < n; i++) {
             out.print(i + " -> {");
-            for (int v: new MySet(graph.getMandNeighOf(i))) {
+            for (int v: new ItSet(graph.getMandNeighOf(i))) {
                 out.print(v + ", ");
             }
             out.println("}");
@@ -117,6 +115,6 @@ public class MainUndir extends AbstractProblem {
         pw.close();
         System.setOut(oldOut);
         Chatterbox.printStatistics(main.solver);
-        System.out.println("Time: " + (System.nanoTime() - time) / 1_000_000.0 + " seconds");
+        System.out.println("Time: " + (System.nanoTime() - time) / 1_000_000.0 + " milliseconds");
     }
 }

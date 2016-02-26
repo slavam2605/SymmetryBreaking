@@ -5,6 +5,7 @@ import org.chocosolver.solver.variables.IUndirectedGraphVar;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.Variable;
 import org.chocosolver.util.ESat;
+import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 
 import java.util.HashSet;
 
@@ -86,7 +87,7 @@ public class PropGirth extends Propagator<Variable> {
         for (int i = 1; i <= n; i++) {
             HashSet<Pair<Integer, Integer>> set = new HashSet<>();
             for (Pair<Integer, Integer> u: reachable) {
-                for (int v: new MySet(graph.getMandNeighOf(u.getA()))) {
+                for (int v: new ItSet(graph.getMandNeighOf(u.getA()))) {
                     if (v != u.getB()) {
                         if (v == vertex) {
                             return i;
@@ -106,7 +107,7 @@ public class PropGirth extends Propagator<Variable> {
         for (int i = 1; i <= n; i++) {
             HashSet<Pair<Integer, Integer>> set = new HashSet<>();
             for (Pair<Integer, Integer> u: reachable) {
-                for (int v: new MySet(graph.getPotNeighOf(u.getA()))) {
+                for (int v: new ItSet(graph.getPotNeighOf(u.getA()))) {
                     if (v != u.getB()) {
                         if (v == vertex) {
                             return i;
