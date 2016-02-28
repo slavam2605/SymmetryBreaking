@@ -185,14 +185,6 @@ public class SymmetryBreakingTest {
     }
 
     @Test
-    public static void testHard1() {
-        Assert.assertEquals(
-                solutionExists(10, 10, 9, true),
-                true // it's preprocessed value of solutionExists(10, 10, 9, false), 225 seconds @ AMD FX-8150 (3.6 GHz, 8 Gb RAM)
-        );
-    }
-
-    @Test
     public static void testAllSmall() {
         for (int n = 1; n <= 6; n++) {
             for (int m = 1; m <= 6; m++) {
@@ -205,10 +197,18 @@ public class SymmetryBreakingTest {
     }
 
     @Test
-    public static void testSpeedWithSymmetryBreaking() {
+    public static void testHardNoSolution() {
         Assert.assertEquals(
                 solutionExists(8, 10, 6, true),
                 false // it's preprocessed value of solutionExists(8, 10, 6, false), 70 seconds @ AMD FX-8150 (3.6 GHz, 8 Gb RAM)
+        );
+    }
+
+    @Test
+    public static void testHardSolutionExists() {
+        Assert.assertEquals(
+                solutionExists(10, 10, 9, true),
+                true // it's preprocessed value of solutionExists(10, 10, 9, false), 225 seconds @ AMD FX-8150 (3.6 GHz, 8 Gb RAM)
         );
     }
 

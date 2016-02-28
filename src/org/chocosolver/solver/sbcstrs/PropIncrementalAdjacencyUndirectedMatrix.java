@@ -33,12 +33,10 @@ public class PropIncrementalAdjacencyUndirectedMatrix extends Propagator<Variabl
         graph = graphVar;
         gdm = graph.monitorDelta(this);
         enforce = (PairProcedure) (from, to) -> {
-            System.out.println("KOKOK! ADD! " + from + ", " + to);
             t[from + to * n].instantiateTo(1, this);
             t[to + from * n].instantiateTo(1, this);
         };
         remove = (PairProcedure) (from, to) -> {
-            System.out.println("KOKOK! REMOVE! " + from + ", " + to);
             t[from + to * n].instantiateTo(0, this);
             t[to + from * n].instantiateTo(0, this);
         };
@@ -60,7 +58,7 @@ public class PropIncrementalAdjacencyUndirectedMatrix extends Propagator<Variabl
 
     private void propagateGraphChanged() throws ContradictionException {
         for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
+            for (int j = 0; j < n; j++) {
                 if (t[i + j * n].isInstantiatedTo(1)) {
                     graph.enforceArc(i, j, aCause);
                 }
@@ -114,8 +112,6 @@ public class PropIncrementalAdjacencyUndirectedMatrix extends Propagator<Variabl
 
     @Override
     public ESat isEntailed() {
-        System.out.println(graph);
-        System.out.println(Arrays.toString(t));
         for (int i = 0; i < n; i++) {
             ISet children = graph.getMandNeighOf(i);
             for (int j = 0; j < n; j++) {

@@ -36,9 +36,9 @@ public class MainUndir extends AbstractProblem {
         solver = new Solver();
     }
 
-    private static final int n = 10;//31;
-    private static final int m = 10;//81;
-    private static final int l = 9;//4;
+    private static final int n = 11;//31;
+    private static final int m = 11;//81;
+    private static final int l = 10;//4;
 
     @Override
     public void buildModel() {

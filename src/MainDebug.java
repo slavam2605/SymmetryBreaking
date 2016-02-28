@@ -1,5 +1,3 @@
-package org.chocosolver.solver.sbcstrs.test;
-
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.cstrs.GCF;
