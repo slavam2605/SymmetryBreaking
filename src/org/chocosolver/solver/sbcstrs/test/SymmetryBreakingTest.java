@@ -197,6 +197,12 @@ public class SymmetryBreakingTest {
     }
 
     @Test
+    public static void testTime() {
+        int n = 13;
+        solutionExists(n, n, n - 1, true);
+    }
+
+    @Test
     public static void testHardNoSolution() {
         Assert.assertEquals(
                 solutionExists(8, 10, 6, true),
