@@ -36,9 +36,9 @@ public class MainUndir extends AbstractProblem {
         solver = new Solver();
     }
 
-    private static final int n = 11;//31;
-    private static final int m = 11;//81;
-    private static final int l = 10;//4;
+    private static final int n = 10;//31;
+    private static final int m = 13;//81;
+    private static final int l = 5;//4;
 
     @Override
     public void buildModel() {
@@ -66,7 +66,7 @@ public class MainUndir extends AbstractProblem {
 
     static {
         try {
-            pw = new PrintStream("keks.log");
+            pw = new PrintStream("C:\\Users\\Home\\Downloads\\graphs\\5.graph");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -96,14 +96,28 @@ public class MainUndir extends AbstractProblem {
 
     public void prettyOut(PrintStream out) {
         //out.println("$#$> " + Arrays.toString(solver.getVars()));
-        out.println("$#$>");
+//        out.println("$#$>");
+//        for (int i = 0; i < n; i++) {
+//            out.print(i + " -> {");
+//            for (int v: new ItSet(graph.getMandNeighOf(i))) {
+//                out.print(v + ", ");
+//            }
+//            out.println("}");
+//        }
+        out.println("graph {");
+        out.print("    {\n        node [shape=circle]\n        ");
         for (int i = 0; i < n; i++) {
-            out.print(i + " -> {");
-            for (int v: new ItSet(graph.getMandNeighOf(i))) {
-                out.print(v + ", ");
-            }
-            out.println("}");
+            out.print(i + " ");
         }
+        out.println("\n    }");
+        for (int i = 0; i < n; i++) {
+            for (int v: new ItSet(graph.getMandNeighOf(i))) {
+                if (v > i) {
+                    out.println("    " + i + " -- " + v);
+                }
+            }
+        }
+        out.println("}");
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -115,7 +129,7 @@ public class MainUndir extends AbstractProblem {
         MainUndir main = new MainUndir();
         main.level = Level.QUIET;
         main.execute();
-        pw.println("Solutions: " + main.count);
+        //pw.println("Solutions: " + main.count);
         pw.close();
         System.setOut(oldOut);
         Chatterbox.printStatistics(main.solver);
