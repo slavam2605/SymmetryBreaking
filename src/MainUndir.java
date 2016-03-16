@@ -3,6 +3,8 @@ import org.chocosolver.samples.AbstractProblem;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.cstrs.GCF;
+import org.chocosolver.solver.sbcstrs.PropIncrementalAdjacencyUndirectedMatrix;
+import org.chocosolver.solver.sbcstrs.PropSymmetryBreaking;
 import org.chocosolver.solver.sbcstrs.SBCF;
 import org.chocosolver.solver.sbcstrs.test.util.PropGirth;
 import org.chocosolver.solver.sbcstrs.test.util.PropIncrementalGirth;
@@ -36,8 +38,12 @@ public class MainUndir extends AbstractProblem {
         solver = new Solver();
     }
 
-    private static final int n = 10;//31;
-    private static final int m = 13;//81;
+    // OEIS, A006856
+    private static final int[] a = new int[] {0, 0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 36, 28, 31};
+    private static final int N = 5;
+
+    private static final int n = N;//31;
+    private static final int m = a[N] + 1;//81;
     private static final int l = 5;//4;
 
     @Override
@@ -53,7 +59,9 @@ public class MainUndir extends AbstractProblem {
         solver.post(GCF.nb_edges(graph, VF.fixed(m, solver)));
         solver.post(GCF.connected(graph));
         solver.post(new Constraint("GirthConstraint", new PropGirth(graph, VF.fixed(l, solver))));
-        SBCF.postSymmetryBreaking(graph, solver);
+//        SBCF.postSymmetryBreaking(graph, solver);
+//        SBCF.postSymmetryBreaking2(graph, solver);
+        SBCF.postSymmetryBreaking3(graph, solver);
     }
 
     @Override

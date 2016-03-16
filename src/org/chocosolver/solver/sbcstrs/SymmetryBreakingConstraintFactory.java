@@ -216,4 +216,18 @@ public class SymmetryBreakingConstraintFactory {
         return LCF.and(all);
     }
 
+    public static void postSymmetryBreaking2(IUndirectedGraphVar graph, Solver solver) {
+        int n = graph.getNbMaxNodes();
+        BoolVar[] t = VF.boolArray("T[]", n * n, solver);
+        solver.post(new Constraint("AdjacencyMatrix", new PropIncrementalAdjacencyUndirectedMatrix(graph, t)));
+        solver.post(new Constraint("SymmBreak", new PropSymmetryBreaking(t)));
+    }
+
+    public static void postSymmetryBreaking3(IUndirectedGraphVar graph, Solver solver) {
+        int n = graph.getNbMaxNodes();
+        BoolVar[] t = VF.boolArray("T[]", n * n, solver);
+        solver.post(new Constraint("AdjacencyMatrix", new PropIncrementalAdjacencyUndirectedMatrix(graph, t)));
+        solver.post(new Constraint("SymmBreak", new PropSymmetryBreakingEx(t)));
+    }
+
 }

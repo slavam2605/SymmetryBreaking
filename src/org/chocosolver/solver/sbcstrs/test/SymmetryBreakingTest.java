@@ -109,7 +109,9 @@ public class SymmetryBreakingTest {
         solver.post(new Constraint("GirthConstraint", new PropGirth(graph, VF.fixed(l, solver))));
         // add symmetry breaking constraint if necessary
         if (addSymmetryBreaking) {
-            SBCF.postSymmetryBreaking(graph, solver);
+//            SBCF.postSymmetryBreaking(graph, solver);
+//            SBCF.postSymmetryBreaking2(graph, solver);
+            SBCF.postSymmetryBreaking3(graph, solver);
         }
         boolean result = solver.findSolution();
         if (result) { // check correctness of found answer
@@ -196,24 +198,24 @@ public class SymmetryBreakingTest {
         }
     }
 
-    @Test
-    public static void testTime() {
-        int n = 13;
-        solutionExists(n, n, n - 1, true);
-    }
-
-    @Test
-    public static void testTime2() {
-        int n = 7;
-        Assert.assertEquals(solutionExists(2 * n - 2, 2 * n, n, false), true);
-    }
+//    @Test
+//    public static void testTime() {
+//        int n = 13;
+//        solutionExists(n, n, n - 1, true);
+//    }
+//
+//    @Test
+//    public static void testTime2() {
+//        int n = 7;
+//        Assert.assertEquals(solutionExists(2 * n - 2, 2 * n, n, false), true);
+//    }
 
     // OEIS, A006856
     private static final int[] a = new int[] {0, 0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 36, 28, 31};
 
     @Test
     public static void testCorrectness() {
-        for (int n = 5; n <= 10; n++) {
+        for (int n = 5; n <= 7; n++) {
             Assert.assertEquals(solutionExists(n, a[n], 5, true), true);
             Assert.assertEquals(solutionExists(n, a[n] + 1, 5, true), false);
         }
@@ -222,13 +224,13 @@ public class SymmetryBreakingTest {
     @Test
     public static void testCorrectness1() {
         int n = 10;
-        Assert.assertEquals(solutionExists(n, a[n], 5, false), true);
+        Assert.assertEquals(solutionExists(n, a[n], 5, true), true);
     }
 
     @Test
     public static void testCorrectness2() {
         int n = 8;
-        Assert.assertEquals(solutionExists(n, a[n] + 1, 5, false), false);
+        Assert.assertEquals(solutionExists(n, a[n] + 1, 5, true), false);
     }
 
     @Test
