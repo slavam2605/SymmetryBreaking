@@ -45,7 +45,6 @@ public class MainUndir extends AbstractProblem {
     private static final int n = N;//31;
     private static final int m = a[N] + 1;//81;
     private static final int l = 5;//4;
-
     @Override
     public void buildModel() {
         UndirectedGraph GLB = new UndirectedGraph(solver, n, SetType.BITSET, true);
