@@ -110,6 +110,7 @@ public class SymmetryBreakingConstraintFactory {
         for (int i = 1; i < n - 1; i++) {
             solver.post(ICF.arithm(p[i], "<=", p[i + 1]));
         }
+        solver.post(new Constraint("MaxStartDegree", new PropStartMaxDegree(graph, solver)));
     }
 
     /**

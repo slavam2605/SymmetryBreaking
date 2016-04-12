@@ -1,13 +1,11 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.chocosolver.samples.AbstractProblem;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.cstrs.GCF;
+import org.chocosolver.solver.sbcstrs.PropIncrementalAdjacencyMatrix;
 import org.chocosolver.solver.sbcstrs.PropIncrementalAdjacencyUndirectedMatrix;
-import org.chocosolver.solver.sbcstrs.PropSymmetryBreaking;
 import org.chocosolver.solver.sbcstrs.SBCF;
 import org.chocosolver.solver.sbcstrs.test.util.PropGirth;
-import org.chocosolver.solver.sbcstrs.test.util.PropIncrementalGirth;
 import org.chocosolver.solver.search.GraphStrategyFactory;
 import org.chocosolver.solver.trace.Chatterbox;
 import org.chocosolver.solver.variables.*;
@@ -20,15 +18,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-public class MainUndir extends AbstractProblem {
+public class GraphStatistics extends AbstractProblem {
 
     IUndirectedGraphVar graph;
     private int count = 0;
 
-    public MainUndir() {
+    public GraphStatistics() {
         super();
         level = Level.QUIET;
     }
@@ -38,13 +35,8 @@ public class MainUndir extends AbstractProblem {
         solver = new Solver();
     }
 
-    // OEIS, A006856
-    private static final int[] a = new int[] {0, 0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 36, 28, 31};
-    private static final int N = 13;
+    private static final int n = 7;//31;
 
-    private static final int n = N;//31;
-    private static final int m = a[N];//81;
-    private static final int l = 5;//4;
     @Override
     public void buildModel() {
         UndirectedGraph GLB = new UndirectedGraph(solver, n, SetType.BITSET, true);
@@ -55,12 +47,7 @@ public class MainUndir extends AbstractProblem {
             }
         }
         graph = GraphVarFactory.undirected_graph_var("G", GLB, GUB, solver);
-        solver.post(GCF.nb_edges(graph, VF.fixed(m, solver)));
         solver.post(GCF.connected(graph));
-        solver.post(new Constraint("GirthConstraint", new PropGirth(graph, VF.fixed(l, solver))));
-        SBCF.postSymmetryBreaking(graph, solver);
-//        SBCF.postSymmetryBreaking2(graph, solver);
-//        SBCF.postSymmetryBreaking3(graph, solver);
     }
 
     @Override
@@ -73,7 +60,7 @@ public class MainUndir extends AbstractProblem {
 
     static {
         try {
-            pw = new PrintStream("C:\\Users\\Home\\Downloads\\graphs\\5.graph");
+            pw = new PrintStream("keks.log");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -88,12 +75,12 @@ public class MainUndir extends AbstractProblem {
     @Override
     public void solve() {
         solver.findSolution();
-        reportSolution();
-//        if (solver.isFeasible() == ESat.TRUE) {
-//            do {
-//                reportSolution();
-//            } while (solver.nextSolution());
-//        }
+//        reportSolution();
+        if (solver.isFeasible() == ESat.TRUE) {
+            do {
+                reportSolution();
+            } while (solver.nextSolution());
+        }
     }
 
     @Override
@@ -101,8 +88,9 @@ public class MainUndir extends AbstractProblem {
         prettyOut(pw);
     }
 
+    public int total = 0;
+
     public void prettyOut(PrintStream out) {
-        //out.println("$#$> " + Arrays.toString(solver.getVars()));
 //        out.println("$#$>");
 //        for (int i = 0; i < n; i++) {
 //            out.print(i + " -> {");
@@ -111,20 +99,23 @@ public class MainUndir extends AbstractProblem {
 //            }
 //            out.println("}");
 //        }
-        out.println("graph {");
-        out.print("    {\n        node [shape=circle]\n        ");
+        List<Integer> degs = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            out.print(i + " ");
+            int deg = 0;
+            for (int ignored : new ItSet(graph.getMandNeighOf(i))) {
+                deg++;
+            }
+            degs.add(deg);
         }
-        out.println("\n    }");
-        for (int i = 0; i < n; i++) {
-            for (int v: new ItSet(graph.getMandNeighOf(i))) {
-                if (v > i) {
-                    out.println("    " + i + " -- " + v);
-                }
+        Collections.sort(degs);
+        int highCount = 0;
+        for (int x: degs) {
+            if (x == degs.get(degs.size() - 1)) {
+                highCount++;
             }
         }
-        out.println("}");
+
+        total += highCount;
     }
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -133,10 +124,11 @@ public class MainUndir extends AbstractProblem {
             @Override public void write(int b) throws IOException {}
         }));
         long time = System.nanoTime();
-        MainUndir main = new MainUndir();
+        GraphStatistics main = new GraphStatistics();
         main.level = Level.QUIET;
         main.execute();
         //pw.println("Solutions: " + main.count);
+        pw.println((double) main.total / main.count);
         pw.close();
         System.setOut(oldOut);
         Chatterbox.printStatistics(main.solver);

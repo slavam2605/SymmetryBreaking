@@ -12,9 +12,7 @@ import org.chocosolver.util.objects.setDataStructures.iterableSet.ItSet;
 import org.chocosolver.util.procedure.PairProcedure;
 import org.chocosolver.util.tools.ArrayUtils;
 
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
