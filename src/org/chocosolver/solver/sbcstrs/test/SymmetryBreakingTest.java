@@ -6,9 +6,7 @@ import org.chocosolver.solver.cstrs.GCF;
 import org.chocosolver.solver.sbcstrs.SBCF;
 import org.chocosolver.solver.sbcstrs.test.util.Pair;
 import org.chocosolver.solver.sbcstrs.test.util.PropGirth;
-import org.chocosolver.solver.sbcstrs.test.util.PropIncrementalGirth;
 import org.chocosolver.solver.search.GraphStrategyFactory;
-import org.chocosolver.solver.search.strategy.GraphStrategies;
 import org.chocosolver.solver.variables.GraphVarFactory;
 import org.chocosolver.solver.variables.IUndirectedGraphVar;
 import org.chocosolver.solver.variables.VF;
@@ -19,16 +17,13 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.log4testng.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashSet;
 
-import static org.testng.Assert.*;
-
-/**
+    /**
  * Tests for {@code org.chocosolver.solver.sbcstrs.SymmetryBreakingConstraintFactory#postSymmetryBreaking(IUndirectedGraphVar, Solver) postSymmetryBreaking}.
  * Symmetry breaking is using in next problem: given n, m and l – integers.
  * <br/>
@@ -109,9 +104,10 @@ public class SymmetryBreakingTest {
         solver.post(new Constraint("GirthConstraint", new PropGirth(graph, VF.fixed(l, solver))));
         // add symmetry breaking constraint if necessary
         if (addSymmetryBreaking) {
-//            SBCF.postSymmetryBreaking(graph, solver);
+            SBCF.postSymmetryBreaking(graph, solver);
 //            SBCF.postSymmetryBreaking2(graph, solver);
-            SBCF.postSymmetryBreaking3(graph, solver);
+//            SBCF.postSymmetryBreaking3(graph, solver);
+//            solver.post(new Constraint("lel", new PropBFS2(graph)));
         }
         boolean result = solver.findSolution();
         if (result) { // check correctness of found answer
@@ -178,7 +174,7 @@ public class SymmetryBreakingTest {
 
     @Test
     public static void testSimple5() {
-        test(3, 2, 3);
+        test(3, 3, 3);
     }
 
     @Test

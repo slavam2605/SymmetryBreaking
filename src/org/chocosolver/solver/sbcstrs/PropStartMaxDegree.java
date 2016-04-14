@@ -20,9 +20,9 @@ public class PropStartMaxDegree extends Propagator<IUndirectedGraphVar> {
         super(new IUndirectedGraphVar[]{graph}, PropagatorPriority.LINEAR, false);
         this.graph = graph;
         n = graph.getNbMaxNodes();
-        degrees = new IntVar[n - 1];
-        for (int i = 0; i < n - 1; i++) {
-            degrees[i] = VF.integer("degrees[" + (i + 1) + "]", graph.getMandNeighOf(i + 1).getSize(), graph.getPotNeighOf(i + 1).getSize(), solver);
+        degrees = new IntVar[n];
+        for (int i = 0; i < n; i++) {
+            degrees[i] = VF.integer("degrees[" + i + "]", graph.getMandNeighOf(i).getSize(), graph.getPotNeighOf(i).getSize(), solver);
         }
     }
 
@@ -30,27 +30,35 @@ public class PropStartMaxDegree extends Propagator<IUndirectedGraphVar> {
 
     @Override
     public void propagate(int evtmask) throws ContradictionException {
-        int degStartUpperBound = graph.getPotNeighOf(0).getSize();
+        if (degrees[0].getLB() != graph.getMandNeighOf(0).getSize()) {
+            degrees[0].updateLowerBound(graph.getMandNeighOf(0).getSize(), this);
+        }
+        if (degrees[0].getUB() != graph.getPotNeighOf(0).getSize()) {
+            degrees[0].updateUpperBound(graph.getPotNeighOf(0).getSize(), this);
+        }
+        int degStartUpperBound = degrees[0].getUB();
         for (int i = 1; i < n; i++) {
             int lowerBound = graph.getMandNeighOf(i).getSize();
             int upperBound = graph.getPotNeighOf(i).getSize();
-            if (degrees[i - 1].getLB() != lowerBound) {
-                degrees[i - 1].updateLowerBound(lowerBound, this);
+            if (degrees[i].getLB() != lowerBound) {
+                degrees[i].updateLowerBound(lowerBound, this);
             }
-            if (degrees[i - 1].getUB() != upperBound) {
-                degrees[i - 1].updateUpperBound(upperBound, this);
+            if (degrees[i].getUB() != upperBound) {
+                degrees[i].updateUpperBound(upperBound, this);
             }
-            if (degrees[i - 1].getUB() > degStartUpperBound) {
-                degrees[i - 1].updateUpperBound(degStartUpperBound, this);
+            if (degrees[i].getUB() > degStartUpperBound) {
+                degrees[i].updateUpperBound(degStartUpperBound, this);
+            }
+            if (degrees[0].getLB() < degrees[i].getLB()) {
+                degrees[0].updateLowerBound(degrees[i].getLB(), this);
             }
         }
     }
 
     @Override
     public ESat isEntailed() {
-        int degStartUpperBound = graph.getPotNeighOf(0).getSize();
         for (int i = 1; i < n; i++) {
-            if (degrees[i - 1].getLB() > degStartUpperBound) {
+            if (degrees[i].getLB() > degrees[0].getUB()) {
                 return ESat.FALSE;
             }
         }
