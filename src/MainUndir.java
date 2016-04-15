@@ -46,9 +46,9 @@ public class MainUndir extends AbstractProblem {
 //    private static final int m = a[N];//81;
 //    private static final int l = 5;//4;
 
-    private static final int n = 11;
-    private static final int m = 11;
-    private static final int l = 10;
+    private static final int n = 12;
+    private static final int m = 12;
+    private static final int l = 11;
 
     // w/o constraiting deg[0] -- 29.8
     // with constraiting deg[0] -- 27.8

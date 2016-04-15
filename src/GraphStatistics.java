@@ -48,6 +48,7 @@ public class GraphStatistics extends AbstractProblem {
         }
         graph = GraphVarFactory.undirected_graph_var("G", GLB, GUB, solver);
         solver.post(GCF.connected(graph));
+//        SBCF.postSymmetryBreaking3(graph, solver);
     }
 
     @Override
