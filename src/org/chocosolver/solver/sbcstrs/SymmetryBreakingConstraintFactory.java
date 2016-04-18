@@ -111,33 +111,38 @@ public class SymmetryBreakingConstraintFactory {
             solver.post(ICF.arithm(p[i], "<=", p[i + 1]));
         }
 
-//        IntVar[] w = new IntVar[n];
-//        for (int i = 0; i < n; i++) {
-//            w[i] = VF.integer("w[" + i + "]", 0, n - i, solver);
-//        }
-//
-//        for (int i = 0; i < n - 1; i++) {
-//            LCF.ifThen(
-//                    ICF.arithm(p[i], "=", p[i + 1]),
-//                    ICF.arithm(w[i], "<=", w[i + 1])
-//            );
-//        }
-//
-//        BoolVar[][] pijVars = new BoolVar[n][n];
-//
-//        for (int i = 0; i < n; i++) {
-//            IntVar I = VF.fixed(i, solver);
-//            for (int j = 0; j < n; j++) {
-//                pijVars[i][j] = ICF.arithm(p[j], "=", I).reif();
-//            }
-//        }
-//
-//        IntVar unity = VF.fixed(1, solver);
-//
-//        for (int i = 0; i < n; i++) {
-//            IntVar[] coeffs = new IntVar[n - i];
-//            // TODO
-//        }
+        IntVar[] w = new IntVar[n];
+        for (int i = 0; i < n; i++) {
+            w[i] = VF.integer("w[" + i + "]", 0, n - i, solver);
+        }
+
+        for (int i = 0; i < n - 1; i++) {
+            LCF.ifThen(
+                    ICF.arithm(p[i], "=", p[i + 1]),
+                    ICF.arithm(w[i], ">=", w[i + 1])
+            );
+        }
+
+        BoolVar[][] pijVars = new BoolVar[n][n];
+
+        for (int i = 0; i < n; i++) {
+            IntVar I = VF.fixed(i, solver);
+            for (int j = 0; j < n; j++) {
+                pijVars[i][j] = ICF.arithm(p[j], "=", I).reif();
+            }
+        }
+
+        IntVar unity = VF.fixed(1, solver);
+
+        for (int i = 0; i < n; i++) {
+            IntVar[] coeffs = new IntVar[n - i];
+            for (int j = i + 1; j < n; j++) {
+                coeffs[j - i - 1] = VF.integer("coeffs[" + i + "][" + (j - i - 1) + "]", 0, n, solver);
+                solver.post(ICF.times(pijVars[i][j], w[j], coeffs[j - i - 1]));
+            }
+            coeffs[n - i - 1] = unity;
+            solver.post(ICF.sum(coeffs, w[i]));
+        }
 
         solver.post(new Constraint("MaxStartDegree", new PropStartMaxDegree(graph, solver)));
     }

@@ -118,7 +118,7 @@ public class StraightSymmetryBreakingTest {
 
     @Test
     public void testAll() {
-        for (int n = 2; n < 6; n++) {
+        for (int n = 2; n < 7; n++) {
             test(n);
         }
     }
