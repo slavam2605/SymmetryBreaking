@@ -74,21 +74,24 @@ public class SymmetryBreakingConstraintFactory {
      * @param solver solver to post constraint
      */
     public static void postSymmetryBreaking(IUndirectedGraphVar graph, Solver solver) {
-        // ---------------------- variables ------------------------
         int n = graph.getNbMaxNodes();
 
         // t[i, j]
         BoolVar[] t = VF.boolArray("T[]", n * n, solver);
 
+        // t[i, j] <-> G
+        solver.post(new Constraint("AdjacencyMatrix", new PropIncrementalAdjacencyUndirectedMatrix(graph, t)));
+        postSymmetryBreaking1T(solver, n, t);
+        solver.post(new Constraint("MaxStartDegree", new PropStartMaxDegree(graph, solver)));
+    }
+
+    private static void postSymmetryBreaking1T(Solver solver, int n, BoolVar[] t) {
         // p[i]
         IntVar[] p = new IntVar[n];
         p[0] = VF.fixed("P[0]", 0, solver);
         for (int i = 1; i < n; i++) {
             p[i] = VF.integer("P[" + i + "]", 0, i - 1, solver);
         }
-        // ---------------------- constraints -----------------------
-        // t[i, j] <-> G
-        solver.post(new Constraint("AdjacencyMatrix", new PropIncrementalAdjacencyUndirectedMatrix(graph, t)));
 
         // (p[j] == i) ⇔ t[i, j] and AND(!t[k, j], 0 ≤ k < j)
         for (int i = 0; i < n - 1; i++) {
@@ -143,8 +146,6 @@ public class SymmetryBreakingConstraintFactory {
             coeffs[n - i - 1] = unity;
             solver.post(ICF.sum(coeffs, w[i]));
         }
-
-        solver.post(new Constraint("MaxStartDegree", new PropStartMaxDegree(graph, solver)));
     }
 
     /**

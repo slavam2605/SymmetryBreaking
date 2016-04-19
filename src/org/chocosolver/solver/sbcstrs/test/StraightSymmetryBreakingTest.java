@@ -86,6 +86,7 @@ public class StraightSymmetryBreakingTest {
         IUndirectedGraphVar graph = GraphVarFactory.undirected_graph_var("G", GLB, GUB, solver);
         solver.set(GraphStrategyFactory.lexico(graph));
         solver.post(GCF.connected(graph));
+        SBCF.postSymmetryBreaking3(graph, solver);
         solver.findSolution();
         if (solver.isFeasible() == ESat.TRUE) {
             do {
