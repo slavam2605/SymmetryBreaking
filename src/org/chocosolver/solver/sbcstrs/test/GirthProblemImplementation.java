@@ -17,8 +17,11 @@ import java.io.PrintStream;
  * @author Моклев Вячеслав
  */
 public class GirthProblemImplementation {
-    public static final int n = 6;
-    public static final int m = 6;
+    public static final int n = 5;
+    public static final int m = 5;
+
+    // OEIS, A006856
+    private static final int[] f4 = new int[] {0, 0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 36, 28, 31};
 
     public static void main(String[] args) {
         Solver solver = new Solver();
@@ -66,6 +69,11 @@ public class GirthProblemImplementation {
         }
         IntVar nbEdges = VF.fixed(m, solver);
         solver.post(ICF.sum(ALowTriangle, nbEdges));
+        // Problem-specific ? and ? constraints
+        IntVar ? = VF.integer("?", 0, n, solver);
+        IntVar ? = VF.integer("?", 0, n, solver);
+
+
 
         solver.set(ISF.lexico_UB(A));
 
@@ -88,15 +96,5 @@ public class GirthProblemImplementation {
             }
             System.out.println();
         }
-
-        //     4
-        //     |
-        // 3---0---1
-        // |   |   |
-        // |   2   |
-        //  \  |  /
-        //     5
-
-        // 0 1 5 2
     }
 }
