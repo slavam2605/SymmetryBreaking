@@ -42,13 +42,13 @@ public class MainUndir extends AbstractProblem {
     private static final int[] a = new int[] {0, 0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 36, 28, 31};
     private static final int N = 13;
 
-    private static final int n = N;//31;
-    private static final int m = a[N] + 1;//81;
-    private static final int l = 5;//4;
+//    private static final int n = N;//31;
+//    private static final int m = a[N] + 1;//81;
+//    private static final int l = 5;//4;
 
-//    private static final int n = 14;
-//    private static final int m = 16;
-//    private static final int l = 8;
+    private static final int n = 14;
+    private static final int m = 14;
+    private static final int l = 13;
 
     // w/o constraiting deg[0] -- 29.8
     // with constraiting deg[0] -- 27.8
@@ -66,9 +66,9 @@ public class MainUndir extends AbstractProblem {
         solver.post(GCF.nb_edges(graph, VF.fixed(m, solver)));
         solver.post(GCF.connected(graph));
         solver.post(new Constraint("GirthConstraint", new PropGirth(graph, VF.fixed(l, solver))));
-        SBCF.postSymmetryBreaking(graph, solver);
+//        SBCF.postSymmetryBreaking(graph, solver);
 //        SBCF.postSymmetryBreaking2(graph, solver);
-//        SBCF.postSymmetryBreaking3(graph, solver);
+        SBCF.postSymmetryBreaking3(graph, solver);
     }
 
     @Override

@@ -148,6 +148,69 @@ public class SymmetryBreakingConstraintFactory {
         }
     }
 
+    public static void postSymmetryBreaking1T2(Solver solver, int n, BoolVar[][] t) {
+        // p[i]
+        IntVar[] p = new IntVar[n];
+        p[0] = VF.fixed("P[0]", 0, solver);
+        for (int i = 1; i < n; i++) {
+            p[i] = VF.integer("P[" + i + "]", 0, i - 1, solver);
+        }
+
+        // (p[j] == i) ⇔ t[i, j] and AND(!t[k, j], 0 ≤ k < j)
+        for (int i = 0; i < n - 1; i++) {
+            IntVar I = VF.fixed(i, solver);
+            for (int j = 1; j < n; j++) {
+                BoolVar[] clause = new BoolVar[i + 1];
+                clause[i] = t[i][j];
+                for (int k = 0; k < i; k++) {
+                    clause[k] = t[k][j].not();
+                }
+                Constraint c = LCF.and(clause);
+                Constraint pij = ICF.arithm(p[j], "=", I);
+                LCF.ifThen(pij, c);
+                LCF.ifThen(c, pij);
+            }
+        }
+
+        // p[i] ≤ p[i + 1]
+        for (int i = 1; i < n - 1; i++) {
+            solver.post(ICF.arithm(p[i], "<=", p[i + 1]));
+        }
+
+        IntVar[] w = new IntVar[n];
+        for (int i = 0; i < n; i++) {
+            w[i] = VF.integer("w[" + i + "]", 0, n - i, solver);
+        }
+
+        for (int i = 0; i < n - 1; i++) {
+            LCF.ifThen(
+                    ICF.arithm(p[i], "=", p[i + 1]),
+                    ICF.arithm(w[i], ">=", w[i + 1])
+            );
+        }
+
+        BoolVar[][] pijVars = new BoolVar[n][n];
+
+        for (int i = 0; i < n; i++) {
+            IntVar I = VF.fixed(i, solver);
+            for (int j = 0; j < n; j++) {
+                pijVars[i][j] = ICF.arithm(p[j], "=", I).reif();
+            }
+        }
+
+        IntVar unity = VF.fixed(1, solver);
+
+        for (int i = 0; i < n; i++) {
+            IntVar[] coeffs = new IntVar[n - i];
+            for (int j = i + 1; j < n; j++) {
+                coeffs[j - i - 1] = VF.integer("coeffs[" + i + "][" + (j - i - 1) + "]", 0, n, solver);
+                solver.post(ICF.times(pijVars[i][j], w[j], coeffs[j - i - 1]));
+            }
+            coeffs[n - i - 1] = unity;
+            solver.post(ICF.sum(coeffs, w[i]));
+        }
+    }
+
     /**
      * Does the same as {@link #postSymmetryBreaking(IDirectedGraphVar, Solver)}, but
      * post nothing and return single {@link Constraint}.
